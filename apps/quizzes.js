@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb";
 
 const quizRouter = Router();
 const collection = db.collection("quizzes");
+const answerCollection = db.collection("answers");
 
 quizRouter.post("/", async (req, res) => {
   try {
@@ -68,10 +69,33 @@ quizRouter.delete("/:id", async (req, res) => {
   try {
     const quizId = new ObjectId(req.params.id);
     await collection.deleteOne({ _id: quizId });
+    await collection.deleteMany({ quizId_id: quizId });
 
     return res.json({
       message: "Quiz has been deleted successfully",
     });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
+
+quizRouter.post("/:id/answer", async (req, res) => {
+  try {
+    const quizId = new ObjectId(req.params.id);
+    const answerData = { quiz_id: quizId, ...req.body, created_at: new Date() };
+    await answerCollection.insertOne(answerData);
+    return res.json({
+      message: "Answer has been added successfully",
+    });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
+
+quizRouter.get("/:id/answer", async (req, res) => {
+  try {
+    const allAnswers = await answerCollection.find().toArray();
+    return res.json({ data: allAnswers });
   } catch (error) {
     return res.json({ message: `${error}` });
   }
