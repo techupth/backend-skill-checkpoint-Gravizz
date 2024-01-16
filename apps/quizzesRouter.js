@@ -111,7 +111,7 @@ quizRouter.get("/:id/answer", async (req, res) => {
   }
 });
 
-quizRouter.put("/:id/answer/:id", async (req, res) => {
+quizRouter.put("/answer/:id", async (req, res) => {
   try {
     const newAnswerData = { ...req.body };
     const answerId = new ObjectId(req.params.id);

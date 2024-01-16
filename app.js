@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import quizRouter from "./apps/quizzes.js";
+import quizRouter from "./apps/quizzesRouter.js";
 import { client } from "./utils/db.js";
 
 async function init() {
