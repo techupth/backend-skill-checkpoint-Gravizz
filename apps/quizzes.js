@@ -48,18 +48,23 @@ quizRouter.get("/:id", async (req, res) => {
 
 quizRouter.put("/:id", async (req, res) => {
   try {
-    const newQuizData = { ...req.body, modified_at: new Date() };
     const quizId = new ObjectId(req.params.id);
+    const newQuizData = { ...req.body };
 
-    await collection.updateOne({ _id: quizId }, { $set: newQuizData });
     if (newQuizData.like) {
+      await collection.updateOne({ _id: quizId }, { $set: newQuizData });
       return res.json({
-        message: "Quiz's like has been updated successfully",
+        message: "Quiz's like has been change",
+      });
+    } else {
+      await collection.updateOne(
+        { _id: quizId },
+        { $set: newQuizData, modified_at: new Date() }
+      );
+      return res.json({
+        message: "Quiz has been updated successfully",
       });
     }
-    return res.json({
-      message: "Quiz has been updated successfully",
-    });
   } catch (error) {
     return res.json({ message: `${error}` });
   }
@@ -69,7 +74,7 @@ quizRouter.delete("/:id", async (req, res) => {
   try {
     const quizId = new ObjectId(req.params.id);
     await collection.deleteOne({ _id: quizId });
-    await collection.deleteMany({ quizId_id: quizId });
+    await answerCollection.deleteMany({ quiz_id: quizId });
 
     return res.json({
       message: "Quiz has been deleted successfully",
@@ -96,6 +101,22 @@ quizRouter.get("/:id/answer", async (req, res) => {
   try {
     const allAnswers = await answerCollection.find().toArray();
     return res.json({ data: allAnswers });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
+
+quizRouter.put("/:id/answer/:id", async (req, res) => {
+  try {
+    const newAnswerData = { ...req.body };
+    const answerId = new ObjectId(req.params.id);
+    await answerCollection.updateOne(
+      { _id: answerId },
+      { $set: newAnswerData }
+    );
+    return res.json({
+      message: "Answer's like has been change",
+    });
   } catch (error) {
     return res.json({ message: `${error}` });
   }
