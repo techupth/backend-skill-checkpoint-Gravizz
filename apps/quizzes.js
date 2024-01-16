@@ -28,9 +28,23 @@ quizRouter.get("/", async (req, res) => {
 
 quizRouter.get("/:id", async (req, res) => {
   try {
-    const productId = new ObjectId(req.params.id);
-    const quizData = await collection.findOne(productId);
+    const quizId = new ObjectId(req.params.id);
+    const quizData = await collection.findOne(quizId);
     return res.json({ data: quizData });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
+
+quizRouter.put("/:id", async (req, res) => {
+  try {
+    const newQuizData = { ...req.body, modified_at: new Date() };
+    const quizId = new ObjectId(req.params.id);
+
+    await collection.updateOne({ _id: quizId }, { $set: newQuizData });
+    return res.json({
+      message: "Quiz has been updated successfully",
+    });
   } catch (error) {
     return res.json({ message: `${error}` });
   }
