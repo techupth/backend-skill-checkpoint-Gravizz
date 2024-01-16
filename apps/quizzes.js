@@ -16,3 +16,14 @@ quizRouter.post("/", async (req, res) => {
     return res.json({ message: `${error}` });
   }
 });
+
+quizRouter.get("/", async (req, res) => {
+  try {
+    const allQuizzes = await collection.find().toArray();
+    return res.json({ data: allQuizzes });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
+
+export default quizRouter;
