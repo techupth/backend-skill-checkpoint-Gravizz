@@ -26,4 +26,13 @@ quizRouter.get("/", async (req, res) => {
   }
 });
 
+quizRouter.get("/:id", async (req, res) => {
+  try {
+    const productId = new ObjectId(req.params.id);
+    const quizData = await collection.findOne(productId);
+    return res.json({ data: quizData });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
 export default quizRouter;
