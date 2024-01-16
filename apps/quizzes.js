@@ -88,6 +88,11 @@ quizRouter.post("/:id/answer", async (req, res) => {
   try {
     const quizId = new ObjectId(req.params.id);
     const answerData = { quiz_id: quizId, ...req.body, created_at: new Date() };
+    if (answerData.answer.length > 300) {
+      return res.json({
+        message: "Answer can not exceed 300 characters",
+      });
+    }
     await answerCollection.insertOne(answerData);
     return res.json({
       message: "Answer has been added successfully",
