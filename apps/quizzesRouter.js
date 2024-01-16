@@ -54,7 +54,7 @@ quizRouter.put("/:id", async (req, res) => {
     if (newQuizData.like) {
       await collection.updateOne({ _id: quizId }, { $set: newQuizData });
       return res.json({
-        message: "Quiz's like has been change",
+        message: "Quiz's like has been change successfully",
       });
     } else {
       await collection.updateOne(
