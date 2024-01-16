@@ -8,7 +8,7 @@ const collection = db.collection("quizzes");
 quizRouter.post("/", async (req, res) => {
   try {
     const quizData = { ...req.body, created_at: new Date() };
-    const newQuizData = await collection.insertOne(quizData);
+    await collection.insertOne(quizData);
     return res.json({
       message: "Quiz has been added successfully",
     });
@@ -19,7 +19,16 @@ quizRouter.post("/", async (req, res) => {
 
 quizRouter.get("/", async (req, res) => {
   try {
-    const allQuizzes = await collection.find().toArray();
+    const title = req.query.keywords;
+    const category = req.query.category;
+    const query = {};
+    if (title) {
+      query.title = new RegExp(title, "i");
+    }
+    if (category) {
+      query.category = new RegExp(category, "i");
+    }
+    const allQuizzes = await collection.find(query).limit(10).toArray();
     return res.json({ data: allQuizzes });
   } catch (error) {
     return res.json({ message: `${error}` });
@@ -42,6 +51,11 @@ quizRouter.put("/:id", async (req, res) => {
     const quizId = new ObjectId(req.params.id);
 
     await collection.updateOne({ _id: quizId }, { $set: newQuizData });
+    if (newQuizData.like) {
+      return res.json({
+        message: "Quiz's like has been updated successfully",
+      });
+    }
     return res.json({
       message: "Quiz has been updated successfully",
     });
