@@ -49,4 +49,17 @@ quizRouter.put("/:id", async (req, res) => {
     return res.json({ message: `${error}` });
   }
 });
+
+quizRouter.delete("/:id", async (req, res) => {
+  try {
+    const quizId = new ObjectId(req.params.id);
+    await collection.deleteOne({ _id: quizId });
+
+    return res.json({
+      message: "Quiz has been deleted successfully",
+    });
+  } catch (error) {
+    return res.json({ message: `${error}` });
+  }
+});
 export default quizRouter;
